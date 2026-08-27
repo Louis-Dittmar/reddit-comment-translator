@@ -1,0 +1,9 @@
+# Build-Artefakte (werden von tools/build.ps1 erzeugt)
+dist/
+
+# Node
+node_modules/
+
+# Editor/OS
+.DS_Store
+Thumbs.db

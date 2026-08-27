@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reddit DE – Einstellungen</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f8;
+      --card: #ffffff;
+      --border: #d8dde1;
+      --text: #1a1a1b;
+      --muted: #5c6c76;
+      --accent: #ff4500;
+      --ok: #046b46;
+      --err: #c1002a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1113;
+        --card: #181c1f;
+        --border: #2f3639;
+        --text: #e5e9ea;
+        --muted: #99a1a6;
+        --ok: #4ad295;
+        --err: #ff6a72;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 20px 64px;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .wrap { max-width: 680px; margin: 0 auto; }
+    header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    header img { width: 40px; height: 40px; }
+    h1 { margin: 0; font-size: 21px; }
+    .sub { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .row { margin-bottom: 16px; }
+    .row:last-child { margin-bottom: 0; }
+    label.field { display: block; font-weight: 600; font-size: 13px; margin-bottom: 5px; }
+    .hint { margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+    .hint a { color: inherit; }
+    input[type="text"], input[type="password"], input[type="number"], select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+    }
+    input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+    .check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+    .check:last-child { margin-bottom: 0; }
+    .check input { margin: 3px 0 0; width: 16px; height: 16px; accent-color: var(--accent); flex: 0 0 auto; }
+    .check .txt { flex: 1 1 auto; }
+    .check .txt b { display: block; font-size: 14px; font-weight: 600; }
+    .check .txt span { color: var(--muted); font-size: 12px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 4px; }
+    button {
+      padding: 9px 16px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--muted); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.primary:hover { filter: brightness(1.08); }
+    button:disabled { opacity: .55; cursor: default; }
+    .status { font-size: 13px; min-height: 20px; }
+    .status.ok { color: var(--ok); }
+    .status.err { color: var(--err); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+    .stats {
+      margin: 14px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .stats-row + .stats-row { border-top: 1px solid var(--border); }
+    .stats-row span { color: var(--muted); }
+    .stats-row b { font-variant-numeric: tabular-nums; text-align: right; }
+    pre.sample {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      font-size: 12.5px;
+      white-space: pre-wrap;
+      color: var(--muted);
+      max-height: 160px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="../icons/icon.svg" alt="">
+      <div>
+        <h1>Reddit DE – Kommentar-Übersetzer</h1>
+      </div>
+    </header>
+    <p class="sub">Übersetzt fremdsprachige Reddit-Kommentare ins Deutsche. Der Originalkommentar bleibt stehen, die Übersetzung erscheint darunter.</p>
+
+    <section id="permSection" hidden>
+      <h2>Berechtigung</h2>
+      <p class="hint" style="margin-top:0">Firefox erteilt Add-ons den Zugriff auf fremde Server nicht automatisch. Ohne diese Freigabe kann das Add-on die OpenAI-API nicht erreichen.</p>
+      <div class="actions">
+        <button type="button" class="primary" id="grant">Zugriff auf api.openai.com erlauben</button>
+        <span class="status" id="permStatus"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>OpenAI-Zugang</h2>
+
+      <div class="row">
+        <label class="field" for="apiKey">API-Key</label>
+        <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off" spellcheck="false">
+        <p class="hint">Wird nur lokal im Browser gespeichert (<code>storage.local</code>) und ausschließlich an <code>api.openai.com</code> gesendet. Key erstellen unter <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a>.</p>
+      </div>
+
+      <div class="row two">
+        <div>
+          <label class="field" for="model">Modell für die Übersetzung</label>
+          <select id="model"></select>
+        </div>
+        <div>
+          <label class="field" for="detectModel">Modell für die Spracherkennung</label>
+          <select id="detectModel"></select>
+        </div>
+      </div>
+      <p class="hint">Die mit „2,5 Mio. Token/Tag“ markierten Modelle liegen im großen Gratis-Kontingent, wenn das Teilen von API-Daten mit OpenAI aktiviert ist. <b>gpt-5.4-mini</b> ist davon das stärkste.</p>
+
+      <div class="row">
+        <label class="field" for="reasoningEffort">Denkaufwand (nur gpt-5 / o-Modelle)</label>
+        <select id="reasoningEffort">
+          <option value="minimal">minimal – am schnellsten und günstigsten</option>
+          <option value="low">low – empfohlen</option>
+          <option value="medium">medium – gründlicher, langsamer</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="test">Verbindung testen</button>
+        <span class="status" id="testStatus"></span>
+      </div>
+      <pre class="sample" id="sample" hidden></pre>
+    </section>
+
+    <section>
+      <h2>Verhalten</h2>
+
+      <div class="check">
+        <input type="checkbox" id="enabled">
+        <span class="txt">
+          <b>Add-on aktiv</b>
+          <span>Schaltet die Übersetzungsboxen auf Reddit komplett ein oder aus.</span>
+        </span>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="autoTranslate">
+        <span class="txt">
+          <b>Automatisch übersetzen</b>
+          <span>Aus: unter jedem Kommentar erscheint stattdessen ein Knopf zum manuellen Übersetzen.</span>
+        </span>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="onlyVisible">
+        <span class="txt">
+          <b>Nur sichtbare Kommentare</b>
+          <span>Übersetzt erst beim Heranscrollen. Dringend empfohlen – spart in langen Threads sehr viele Token.</span>
+        </span>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="useCache">
+        <span class="txt">
+          <b>Übersetzungen zwischenspeichern</b>
+          <span>Bereits übersetzte Kommentare werden beim erneuten Aufruf nicht noch einmal an die API geschickt.</span>
+        </span>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="fastPrefilter">
+        <span class="txt">
+          <b>Deutschen Text lokal vorfiltern</b>
+          <span>Erkennt offensichtlich deutsche Beiträge ohne API-Aufruf. Spart zusätzlich, ist aber ungenauer als die Prüfung durch das Modell.</span>
+        </span>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <label class="field" for="detectMode">Spracherkennung</label>
+        <select id="detectMode">
+          <option value="thread">Einmal pro Beitrag – 5 Kommentare als Stichprobe (empfohlen)</option>
+          <option value="comment">Für jeden Kommentar einzeln – genauer, deutlich mehr Aufrufe</option>
+        </select>
+        <p class="hint">Ein Reddit-Beitrag ist fast immer einsprachig. Der Beitragsmodus prüft die Sprache mit einem einzigen Aufruf für den gesamten Thread; danach folgen nur noch Übersetzungen. Sollte darin doch ein deutscher Kommentar auftauchen, erkennt ihn die Übersetzung selbst und lässt ihn unverändert – die Box wird dann wieder ausgeblendet.</p>
+      </div>
+
+      <div class="row two" style="margin-top:16px">
+        <div>
+          <label class="field" for="maxConcurrent">Gleichzeitige Übersetzungen</label>
+          <input type="number" id="maxConcurrent" min="1" max="5" step="1">
+          <p class="hint">1–5. Höher = schneller, aber eher Rate-Limits.</p>
+        </div>
+        <div>
+          <label class="field" for="minLength">Mindestlänge in Zeichen</label>
+          <input type="number" id="minLength" min="1" max="200" step="1">
+          <p class="hint">Kürzere Kommentare werden ignoriert.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Protokoll und Verbrauch</h2>
+
+      <div class="check">
+        <input type="checkbox" id="logRequests">
+        <span class="txt">
+          <b>Anfragen bei OpenAI protokollieren</b>
+          <span>Sendet <code>store: true</code> mit. Jede Anfrage erscheint dann unter <a href="https://platform.openai.com/logs" target="_blank" rel="noopener">platform.openai.com/logs</a> – mit vollständigem Text, Modell, Dauer und Token-Verbrauch.</span>
+        </span>
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="verboseLog">
+        <span class="txt">
+          <b>Ausführliche Ausgabe in der Browser-Konsole</b>
+          <span>Schreibt zu jedem Aufruf Modell, Ein-/Ausgabe-Token, Denk-Token und Dauer in die Konsole des Add-ons (<code>about:debugging</code> → Untersuchen).</span>
+        </span>
+      </div>
+
+      <p class="hint" style="margin-top:14px">Jede Anfrage wird zusätzlich mit Metadaten versehen, nach denen sich die Logs filtern lassen: <code>app</code>, <code>kind</code> (<code>detect</code>/<code>translate</code>/<code>test</code>), <code>post</code>, <code>from</code>, <code>chars</code>.</p>
+
+      <div id="statsBox" class="stats">
+        <div class="stats-row"><span>Heute</span><b id="statToday">–</b></div>
+        <div class="stats-row"><span>Aufrufe heute</span><b id="statCalls">–</b></div>
+        <div class="stats-row"><span>davon Erkennung / Übersetzung</span><b id="statSplit">–</b></div>
+        <div class="stats-row"><span>Denk-Token heute</span><b id="statReasoning">–</b></div>
+        <div class="stats-row"><span>Gesamt</span><b id="statTotal">–</b></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="refreshStats">Aktualisieren</button>
+        <button type="button" id="resetStats">Zähler zurücksetzen</button>
+        <span class="status" id="statsStatus"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>Zwischenspeicher</h2>
+      <div class="actions">
+        <button type="button" id="clear">Zwischenspeicher leeren</button>
+        <span class="status" id="clearStatus"></span>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="primary" id="save">Speichern</button>
+      <span class="status" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

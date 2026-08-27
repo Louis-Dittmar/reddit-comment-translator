@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Reddit DE - Kommentar-Uebersetzer",
+  "version": "1.0.0",
+  "description": "Zeigt unter jedem Reddit-Kommentar eine deutsche Uebersetzung an (OpenAI API). Deutsche Kommentare werden erkannt und uebersprungen.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "reddit-de-translator@louis.local",
+      "strict_min_version": "115.0",
+      "data_collection_permissions": {
+        "required": ["websiteContent"]
+      }
+    }
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.openai.com/*"],
+  "background": {
+    "scripts": ["src/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.reddit.com/*",
+        "*://old.reddit.com/*",
+        "*://new.reddit.com/*",
+        "*://sh.reddit.com/*",
+        "*://np.reddit.com/*"
+      ],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_title": "Reddit DE - Kommentar-Uebersetzer",
+    "default_icon": {
+      "48": "icons/icon.svg",
+      "96": "icons/icon.svg"
+    }
+  },
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  }
+}

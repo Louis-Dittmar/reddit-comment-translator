@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Reddit DE – Testseite</title>
+<link rel="stylesheet" href="../src/content.css">
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; margin: 24px; max-width: 760px; background:#fff; color:#111; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing:.05em; color:#666; margin: 28px 0 6px; }
+  shreddit-comment, .thing.comment { display:block; border:1px solid #ddd; border-radius:10px; padding:12px; margin-bottom:6px; }
+  .md p { margin: 0 0 .5em; }
+  .md p:last-child { margin-bottom: 0; }
+  #log { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 12px; background:#f4f4f4; padding:10px; border-radius:8px; }
+</style>
+<script>
+  // --- Extension-API simulieren -------------------------------------
+  // sendMessage gibt den Text zurück, den das Content-Script extrahiert hat.
+  // Dadurch zeigt jede Box exakt den Markdown, der an die API ginge.
+  window.__sent = [];
+  window.browser = {
+    storage: {
+      local: { get: async () => ({ enabled: true, autoTranslate: true, onlyVisible: false, minLength: 3 }), set: async () => {} },
+      onChanged: { addListener() {} },
+    },
+    runtime: {
+      sendMessage: async (msg) => {
+        window.__sent.push(msg);
+        if (/^Das ist ein deutscher/.test(msg.text)) return { status: 'skipped', reason: 'german', lang: 'de' };
+        return { status: 'ok', text: msg.text, lang: 'en', model: 'gpt-5.4-mini' };
+      },
+    },
+  };
+</script>
+</head>
+<body>
+<h1>Fixture</h1>
+<shreddit-post id="t3_test123" style="display:none"></shreddit-post>
+
+<h2>1 – Einfacher einzeiliger Kommentar</h2>
+<shreddit-comment thingid="t1_a1" depth="0">
+  <div><div slot="comment"><div id="t1_a1-post-rtjson-content" class="md"><p>Yeah, this happens to me all the time.</p></div></div></div>
+</shreddit-comment>
+
+<h2>2 – Mehrere Absätze + harte Zeilenumbrüche</h2>
+<shreddit-comment thingid="t1_a2" depth="0">
+  <div><div slot="comment"><div id="t1_a2-post-rtjson-content" class="md">
+    <p>First line here.<br>Second line right below it.<br>Third line.</p>
+    <p>And a completely separate paragraph after an empty line.</p>
+  </div></div></div>
+</shreddit-comment>
+
+<h2>3 – Liste, verschachtelt, mit Formatierung</h2>
+<shreddit-comment thingid="t1_a3" depth="0">
+  <div><div slot="comment"><div id="t1_a3-post-rtjson-content" class="md">
+    <p>You need <strong>three</strong> things:</p>
+    <ul>
+      <li>A <em>valid</em> key</li>
+      <li>Some patience
+        <ul><li>seriously, a lot</li></ul>
+      </li>
+      <li>The <code>--verbose</code> flag</li>
+    </ul>
+    <p>Then it works.</p>
+  </div></div></div>
+</shreddit-comment>
+
+<h2>4 – Zitat, Link, Codeblock</h2>
+<shreddit-comment thingid="t1_a4" depth="0">
+  <div><div slot="comment"><div id="t1_a4-post-rtjson-content" class="md">
+    <blockquote><p>are you sure about that?</p></blockquote>
+    <p>Yes. See <a href="https://example.com/docs">the documentation</a> and also <a href="/r/programming">r/programming</a>.</p>
+    <pre><code>const x = 1;
+console.log(x);</code></pre>
+    <p>That is all, u/someone. /s</p>
+  </div></div></div>
+</shreddit-comment>
+
+<h2>5 – Nummerierte Liste + Überschrift</h2>
+<shreddit-comment thingid="t1_a5" depth="0">
+  <div><div slot="comment"><div id="t1_a5-post-rtjson-content" class="md">
+    <h2>Quick guide</h2>
+    <ol><li>Download it</li><li>Unzip</li><li>Run <code>install.sh</code></li></ol>
+  </div></div></div>
+</shreddit-comment>
+
+<h2>6 – Bereits deutsch (muss ohne Box bleiben)</h2>
+<shreddit-comment thingid="t1_a6" depth="0">
+  <div><div slot="comment"><div id="t1_a6-post-rtjson-content" class="md"><p>Das ist ein deutscher Kommentar und sollte nicht übersetzt werden.</p></div></div></div>
+</shreddit-comment>
+
+<h2>7 – Verschachtelte Kommentare (Antwort im Elternteil)</h2>
+<shreddit-comment thingid="t1_a7" depth="0">
+  <div>
+    <div slot="comment"><div id="t1_a7-post-rtjson-content" class="md"><p>Parent comment text.</p></div></div>
+    <div id="comment-children">
+      <shreddit-comment thingid="t1_a8" depth="1">
+        <div><div slot="comment"><div id="t1_a8-post-rtjson-content" class="md"><p>Child reply text.</p></div></div></div>
+      </shreddit-comment>
+    </div>
+  </div>
+</shreddit-comment>
+
+<h2>8 – Old Reddit</h2>
+<div class="thing comment" id="thing_t1_b1">
+  <div class="entry">
+    <form class="usertext"><div class="usertext-body"><div class="md">
+      <p>Old reddit style comment with a <strong>bold</strong> word.</p>
+      <p>Second paragraph.</p>
+    </div></div></form>
+  </div>
+</div>
+
+<h2>Debug</h2>
+<div id="log">wird gefüllt …</div>
+
+<script src="../src/content.js"></script>
+<script>
+  setTimeout(() => {
+    const boxes = document.querySelectorAll('.rdtde-box');
+    const lines = [];
+    lines.push('Boxen: ' + boxes.length + '  |  API-Aufrufe: ' + window.__sent.length);
+    lines.push('');
+    const first = window.__sent[0] || {};
+    lines.push('postId: ' + first.postId);
+    lines.push('Stichprobe: ' + (first.samples || []).length + ' Kommentare');
+    lines.push('');
+    window.__sent.forEach((m, i) => {
+      lines.push('--- Aufruf ' + (i + 1) + ' -> extrahierter Text ---');
+      lines.push(JSON.stringify(m.text));
+      lines.push('');
+    });
+    document.getElementById('log').textContent = lines.join('\n');
+  }, 900);
+</script>
+</body>
+</html>

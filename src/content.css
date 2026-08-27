@@ -1,0 +1,225 @@
+/* ------------------------------------------------------------------
+   Reddit DE - Kommentar-Uebersetzer
+   Uebersetzungs-Box unter jedem Reddit-Kommentar.
+   Farben leiten sich von Reddits eigenen CSS-Variablen ab, damit die
+   Box in hellem und dunklem Design automatisch korrekt aussieht.
+   ------------------------------------------------------------------ */
+
+.rdtde-box {
+  --rdtde-accent: #ff4500;
+  --rdtde-bg: var(--color-neutral-background-weak, rgba(127, 127, 127, .07));
+  --rdtde-border: var(--color-neutral-border-weak, rgba(127, 127, 127, .28));
+  --rdtde-text: var(--color-neutral-content-strong, inherit);
+  --rdtde-muted: var(--color-neutral-content-weak, rgba(127, 127, 127, .95));
+
+  box-sizing: border-box;
+  margin: 6px 0 4px;
+  padding: 8px 12px 10px;
+  border: 1px solid var(--rdtde-border);
+  border-inline-start: 3px solid var(--rdtde-accent);
+  border-radius: 10px;
+  background: var(--rdtde-bg);
+  color: var(--rdtde-text);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  animation: rdtde-in .18s ease-out;
+}
+
+/* Old Reddit hat eine eigene, engere Typografie */
+.rdtde-old {
+  margin: 6px 0 8px;
+  font-size: 13px;
+}
+
+@keyframes rdtde-in {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.rdtde-box.rdtde-leaving {
+  opacity: 0;
+  transition: opacity .2s ease-in;
+}
+
+/* ---------- Kopfzeile ---------- */
+
+.rdtde-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--rdtde-muted);
+}
+
+.rdtde-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--rdtde-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+}
+
+.rdtde-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rdtde-actions {
+  display: flex;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.rdtde-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--rdtde-muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  transition: background .12s ease, color .12s ease;
+}
+
+.rdtde-btn:hover,
+.rdtde-btn:focus-visible {
+  background: var(--color-neutral-background-hover, rgba(127, 127, 127, .16));
+  color: var(--rdtde-text);
+}
+
+.rdtde-btn:focus-visible {
+  outline: 2px solid var(--rdtde-accent);
+  outline-offset: 1px;
+}
+
+/* ---------- Inhalt ---------- */
+
+.rdtde-body > *:first-child { margin-top: 0; }
+.rdtde-body > *:last-child  { margin-bottom: 0; }
+
+.rdtde-body p {
+  margin: 0 0 .55em;
+}
+
+.rdtde-body ul,
+.rdtde-body ol {
+  margin: 0 0 .55em;
+  padding-inline-start: 1.4em;
+}
+
+.rdtde-body li { margin: 0 0 .2em; }
+
+.rdtde-body blockquote {
+  margin: 0 0 .55em;
+  padding-inline-start: .7em;
+  border-inline-start: 2px solid var(--rdtde-border);
+  color: var(--rdtde-muted);
+}
+
+.rdtde-body h1,
+.rdtde-body h2,
+.rdtde-body h3,
+.rdtde-body h4 {
+  margin: .2em 0 .4em;
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.rdtde-body pre {
+  margin: 0 0 .55em;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--color-neutral-background-container-strong, rgba(127, 127, 127, .16));
+  overflow-x: auto;
+  white-space: pre;
+  font-size: .92em;
+}
+
+.rdtde-body code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--color-neutral-background-container-strong, rgba(127, 127, 127, .16));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .92em;
+}
+
+.rdtde-body pre code {
+  padding: 0;
+  background: none;
+}
+
+.rdtde-body a {
+  color: var(--color-secondary-plain, #0079d3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rdtde-body hr {
+  margin: .5em 0;
+  border: 0;
+  border-top: 1px solid var(--rdtde-border);
+}
+
+/* ---------- Zustaende ---------- */
+
+.rdtde-box[data-state="pending"],
+.rdtde-box[data-state="loading"] {
+  padding-bottom: 8px;
+}
+
+.rdtde-box[data-state="pending"] .rdtde-body,
+.rdtde-box[data-state="loading"] .rdtde-body {
+  display: none;
+}
+
+.rdtde-box[data-state="error"] {
+  --rdtde-accent: #ea0027;
+}
+
+.rdtde-box[data-state="error"] .rdtde-body {
+  color: var(--color-danger-content, #ea0027);
+  font-size: 13px;
+}
+
+.rdtde-box[data-state="idle"] {
+  --rdtde-accent: var(--color-neutral-border-medium, #888);
+}
+
+.rdtde-spinner {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: rdtde-spin .7s linear infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes rdtde-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdtde-box { animation: none; }
+  .rdtde-spinner { animation-duration: 2s; }
+}
